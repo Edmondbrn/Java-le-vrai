@@ -1,3 +1,4 @@
+package Views;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -5,11 +6,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 
 import javafx.stage.Stage;
-import Views.viewLogin;
-import Views.viewPrincipal;
-import Views.viewSignin;
-import Views.Global;
-import Views.Interface_scene;
 
 import java.io.IOException;
 
@@ -63,7 +59,7 @@ public class Vrai_appli extends Application implements Interface_scene{
         });
 
         //  Gère le bouton de déconnexion
-        viewprincipal.bouton_deconnexion.setOnAction(new EventHandler<ActionEvent>() {
+        viewprincipal.menu_deconnexion.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 setscene_visible(primaryStage, sceneconnexion);
@@ -72,7 +68,6 @@ public class Vrai_appli extends Application implements Interface_scene{
 
         
       
-        // primaryStage.setFullScreen(true);
     }
 
 

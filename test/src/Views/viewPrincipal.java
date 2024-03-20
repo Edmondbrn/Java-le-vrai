@@ -12,6 +12,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -52,9 +55,11 @@ public class viewPrincipal extends ScrollPane {
     ImageView backgroundImage4 = new ImageView(new Image("background3.png"));
     ImageView backgroundImage5 = new ImageView(new Image("background3.png"));
 
+    
+
     VBox vbox_topbar = new VBox();
     Line separateur_top_barre = new Line();
-    public Button bouton_deconnexion = new Button("Déconnexion");
+    // public Button bouton_deconnexion = new Button("Déconnexion");
     Label titre_fenetre_principal = new Label("Page personnel de XXX");
     TextField barre_recherche = new TextField();
     Label titre_recherche = new Label("Rechercher une page");
@@ -64,11 +69,60 @@ public class viewPrincipal extends ScrollPane {
     VBox vbox_choix_post = new VBox();
     static VBox vbox_post = new VBox(20);
     VBox vbox_fond = new VBox();
-
-    public Button bouton_poster = new Button("Poster");
+    // Element de la barre de menu
+    MenuBar menuBar = new MenuBar();
+    Menu menu_ami = new Menu("Amis");
+    Menu menu_se_deconnecter = new Menu("Se déconnecter");
+    MenuItem menu_liste_ami = new MenuItem("Voir liste d'amis");
+    MenuItem menu_liste_bloque = new MenuItem("Voir liste des utilisateurs bloqués");
+    public MenuItem menu_deconnexion = new MenuItem("Déconnexion");
+    
+    Button bouton_poster = new Button("Poster");
 
     public viewPrincipal(Stage un_autre_Stage){ // user à rajouter
+
         vbox_principal.setAlignment(Pos.TOP_CENTER); // Centre les élémenst de la page
+        
+        menu_ami.getItems().addAll(menu_liste_ami, menu_liste_bloque); // ajout des éléments à l'option menu ami
+        menu_se_deconnecter.getItems().addAll(menu_deconnexion); // ajout des éléments à l'option menu se déconnecter
+
+        // Ajouter le menu à la barre de menu
+        menuBar.getMenus().addAll(menu_ami, menu_se_deconnecter); // ajout des éléments à la barre de menu
+
+        // Gère le bouton d'affichage de la liste d'amis
+        menu_ami.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Créer une nouvelle fenêtre
+                Stage nouvelle_fenetre = new Stage();
+                Tableau_follower tableau_follower = new Tableau_follower();
+                try {
+                    tableau_follower.start(nouvelle_fenetre);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+            }
+        });
+
+          // Gère le bouton d'affichage de la liste des bloqués
+          menu_liste_bloque.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Créer une nouvelle fenêtre
+                Stage nouvelle_fenetre_bloque = new Stage();
+                Tableau_bloque tableau_bloque = new Tableau_bloque();
+                try {
+                    tableau_bloque.start(nouvelle_fenetre_bloque);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+            }
+        });
+
+        // Ajouter la barre de menu à la boîte de mise en page verticale (VBox)
+        vbox_principal.getChildren().add(menuBar); // ajout de la barre de menu à la page
         topBar.setAlignment(Pos.TOP_CENTER);
         topBar.setSpacing(40);
 
@@ -87,8 +141,7 @@ public class viewPrincipal extends ScrollPane {
         titre_fenetre_principal.setTranslateY(40); // Centre le titre de la page
         titre_fenetre_principal.setFont(Font.font("System", FontWeight.BOLD, 20)); // change la police d'écriture et la passe en gras
 
-        bouton_deconnexion.setMaxWidth(120); // Place le bouton dans le coin en haut à gauche
-        bouton_deconnexion.setTranslateY(40);
+     
 
         barre_recherche.setPrefWidth(400); // Règle la taille de la barre de recherche
         titre_recherche.setLabelFor(barre_recherche);
@@ -105,7 +158,7 @@ public class viewPrincipal extends ScrollPane {
 
         vbox_post.setAlignment(Pos.CENTER); // Permet de centrer les pots et de les aligner à la verticale
         
-        topBar.getChildren().addAll(vbox_recherche ,titre_fenetre_principal, vbox_choix_post, bouton_deconnexion); // Ajoute les éléments à la barre de recherche
+        topBar.getChildren().addAll(vbox_recherche ,titre_fenetre_principal, vbox_choix_post); // Ajoute les éléments à la barre de recherche
         
         // Gestion du séparateur de l'en tête
         separateur_top_barre.setStartX(0.0f); // Point de départ
@@ -136,28 +189,51 @@ public class viewPrincipal extends ScrollPane {
                 
                 // Gère le cas où l'utilisateur a choisi de poster une Image
                 if (choix_du_post.equals("Image")){ 
-                    // Définition de la boite de dialogue pour choisir un fichier image 
-                    FileChooser choix_fichier = new FileChooser();
-                    // Filtre les fichiers sélectionnables
-                    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.gif)", "*.png", "*.gif");
-                    choix_fichier.getExtensionFilters().add(extFilter);
-                    File fichier_choisi = choix_fichier.showOpenDialog(un_autre_Stage); // affiche la boite de dialogue
-                    
-                    if(fichier_choisi == null)
-                        ; // ne fait rien si l'utilisateur n'a rien sélectionné
-                    
-                    else {
-                        // Récupération du chemin du fichier image
-                        String chemin = new String(fichier_choisi.getAbsolutePath());
-                        ImageView image = new ImageView(new Image("file:///" + chemin));
-    
-                        image.setFitWidth(600); // Règle les dimensions de l'image
-                        image.setFitHeight(400);
-                        image.setPreserveRatio(true); // Garde les proportions de l'image
 
-                        mise_en_page_post(image, false); // affiche les posts avec les boutons like, commenter et supprimer
-                        
-                    }
+                    TextArea champ_titre = new TextArea(); // Définition de la zone d'édition du texte
+                    Label texte_du_titre = new Label(); // futur variable qui va contenir le texte
+                    Button bouton_valider_titre = new Button("Poster");
+                    champ_titre.setMaxWidth(200);// fie la longueur du champ de texte
+                    champ_titre.setPrefHeight(30); // fixe la hauteur du champ de texte
+                    champ_titre.setPromptText("Ecrivez votre titre ici");
+                    vbox_post.getChildren().addAll(champ_titre, bouton_valider_titre); // Ajoute le champ de texte à la page
+
+                    // Gère le bouton valider pour
+                    bouton_valider_titre.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            texte_du_titre.setText(champ_titre.getText()); // Crée un texte à partir du champ de texte
+                            texte_du_titre.underlineProperty().set(true); // souligne le texte
+                            texte_du_titre.setFont(Font.font("System", FontWeight.BOLD, 15)); // change la police d'écriture et la passe en gras
+                            
+                            vbox_post.getChildren().remove(champ_titre); // Retire le champ de texte de la page
+                            vbox_post.getChildren().remove(bouton_valider_titre); // Supprime le bouton valider de la page
+                            vbox_post.getChildren().add(texte_du_titre); // Supprime le bouton valider de la page
+                            
+                            // Définition de la boite de dialogue pour choisir un fichier image 
+                            FileChooser choix_fichier = new FileChooser();
+                            // Filtre les fichiers sélectionnables
+                            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.gif)", "*.png", "*.gif");
+                            choix_fichier.getExtensionFilters().add(extFilter);
+                            File fichier_choisi = choix_fichier.showOpenDialog(un_autre_Stage); // affiche la boite de dialogue
+                            
+                            if(fichier_choisi == null)
+                                ; // ne fait rien si l'utilisateur n'a rien sélectionné
+                            
+                            else {
+                                // Récupération du chemin du fichier image
+                                String chemin = new String(fichier_choisi.getAbsolutePath());
+                                ImageView image = new ImageView(new Image("file:///" + chemin));
+            
+                                image.setFitWidth(600); // Règle les dimensions de l'image
+                                image.setFitHeight(400);
+                                image.setPreserveRatio(true); // Garde les proportions de l'image
+        
+                                mise_en_page_post(image, false); // affiche les posts avec les boutons like, commenter et supprimer
+                                
+                            }
+                        }
+                    });
                 }
 
                 else if (choix_du_post.equals("Texte")){ // Gère le cas où l'utilisateur a choisi de poster du texte
@@ -258,7 +334,6 @@ public class viewPrincipal extends ScrollPane {
         public static void mise_en_page_post(Node node, boolean texte){ // les images et les texte de javafx héritent de la classe Node
             /*
             * Méthode statiques pour met en forme tous les posts avec les boutons like, commenter et supprimer
-            * 
             */
             VBox vbox_mise_en_forme_post = new VBox();
             HBox hbox_boutons_action_post = new HBox(15);
