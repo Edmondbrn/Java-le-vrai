@@ -55,8 +55,6 @@ public class viewPrincipal extends ScrollPane {
     ImageView backgroundImage4 = new ImageView(new Image("background3.png"));
     ImageView backgroundImage5 = new ImageView(new Image("background3.png"));
 
-    
-
     VBox vbox_topbar = new VBox();
     Line separateur_top_barre = new Line();
     // public Button bouton_deconnexion = new Button("Déconnexion");
@@ -79,229 +77,33 @@ public class viewPrincipal extends ScrollPane {
     
     Button bouton_poster = new Button("Poster");
 
+    TextArea champ_titre = new TextArea(); // Définition de la zone d'édition du texte
+    Label texte_du_titre = new Label(); // futur variable qui va contenir le texte
+    Button bouton_valider_titre = new Button("Poster");
+
     public viewPrincipal(Stage un_autre_Stage){ // user à rajouter
 
-        vbox_principal.setAlignment(Pos.TOP_CENTER); // Centre les élémenst de la page
+        vbox_principal.setAlignment(Pos.TOP_CENTER); // Centre les éléments de la page
         
-        menu_ami.getItems().addAll(menu_liste_ami, menu_liste_bloque); // ajout des éléments à l'option menu ami
-        menu_se_deconnecter.getItems().addAll(menu_deconnexion); // ajout des éléments à l'option menu se déconnecter
-
-        // Ajouter le menu à la barre de menu
-        menuBar.getMenus().addAll(menu_ami, menu_se_deconnecter); // ajout des éléments à la barre de menu
-
-        // Gère le bouton d'affichage de la liste d'amis
-        menu_ami.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                // Créer une nouvelle fenêtre
-                Stage nouvelle_fenetre = new Stage();
-                Tableau_follower tableau_follower = new Tableau_follower();
-                try {
-                    tableau_follower.start(nouvelle_fenetre);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                
-            }
-        });
-
-          // Gère le bouton d'affichage de la liste des bloqués
-          menu_liste_bloque.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                // Créer une nouvelle fenêtre
-                Stage nouvelle_fenetre_bloque = new Stage();
-                Tableau_bloque tableau_bloque = new Tableau_bloque();
-                try {
-                    tableau_bloque.start(nouvelle_fenetre_bloque);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                
-            }
-        });
-
-        // Ajouter la barre de menu à la boîte de mise en page verticale (VBox)
-        vbox_principal.getChildren().add(menuBar); // ajout de la barre de menu à la page
-        topBar.setAlignment(Pos.TOP_CENTER);
-        topBar.setSpacing(40);
-
-        backgroundImage.fitWidthProperty().bind(this.widthProperty()); // Règle les dimensions de l'image
-        backgroundImage.fitHeightProperty().bind(this.heightProperty());
-        backgroundImage2.fitWidthProperty().bind(this.widthProperty()); // Règle les dimensions de l'image
-        backgroundImage2.fitHeightProperty().bind(this.heightProperty());
-        backgroundImage3.fitWidthProperty().bind(this.widthProperty()); // Règle les dimensions de l'image
-        backgroundImage3.fitHeightProperty().bind(this.heightProperty());
-        backgroundImage4.fitWidthProperty().bind(this.widthProperty()); // Règle les dimensions de l'image
-        backgroundImage4.fitHeightProperty().bind(this.heightProperty());
-        backgroundImage5.fitWidthProperty().bind(this.widthProperty()); // Règle les dimensions de l'image
-        backgroundImage5.fitHeightProperty().bind(this.heightProperty());
+        this.barre_de_menu(); // Ajoute la barre de menu à la page
+        enTetePage(); // Ajoute l'en tête de la page
+        gestionFond(); // Ajoute le fond d'écran à la page
         
-        titre_fenetre_principal.setFont(Font.font(20)); // fixe la police d'écriture
-        titre_fenetre_principal.setTranslateY(40); // Centre le titre de la page
-        titre_fenetre_principal.setFont(Font.font("System", FontWeight.BOLD, 20)); // change la police d'écriture et la passe en gras
-
-     
-
-        barre_recherche.setPrefWidth(400); // Règle la taille de la barre de recherche
-        titre_recherche.setLabelFor(barre_recherche);
-        titre_recherche.setFont(Font.font("System", FontWeight.BOLD, 15)); // change la police d'écriture et la passe en gras
-        vbox_recherche.setAlignment(Pos.CENTER);
-        vbox_recherche.getChildren().addAll(titre_recherche, barre_recherche); // Ajoute les éléments à la barre de recherche
-
-        type_post.getItems().addAll("Texte", "Image", "Vidéo"); // Ajoute les éléments à la liste déroulante
-        titre_post.setLabelFor(type_post);
-        titre_post.setFont(Font.font("System", FontWeight.BOLD, 15)); // change la police d'écriture et la passe en gras
-        vbox_choix_post.getChildren().addAll(titre_post, type_post, bouton_poster); // Ajoute les éléments à la liste déroulante
-        vbox_choix_post.setAlignment(Pos.CENTER);
-        vbox_choix_post.setSpacing(5);
-
-        vbox_post.setAlignment(Pos.CENTER); // Permet de centrer les pots et de les aligner à la verticale
-        
-        topBar.getChildren().addAll(vbox_recherche ,titre_fenetre_principal, vbox_choix_post); // Ajoute les éléments à la barre de recherche
-        
-        // Gestion du séparateur de l'en tête
-        separateur_top_barre.setStartX(0.0f); // Point de départ
-        separateur_top_barre.setStartY(0.0f);
-        separateur_top_barre.setEndX(LARGEUR_FENETRE); // Défini la longueur du séparateur
-        separateur_top_barre.setEndY(0.0f);
-        separateur_top_barre.setStrokeWidth(3.0f); 
-        separateur_top_barre.setStroke(Color.BLACK); // Change la couleur de la ligne en noir
-
-        vbox_topbar.getChildren().addAll(topBar, separateur_top_barre); 
-        vbox_topbar.setSpacing(10); // Ajoute un espacement entre les éléments de l'en tête
-
-        // Ajout de tous les fonds à la vbox pour créer le fond d'écran (les aligne à la verticale)
-        vbox_fond.getChildren().addAll(backgroundImage, backgroundImage2,  backgroundImage3,  backgroundImage4,  backgroundImage5); 
-       
         vbox_principal.getChildren().addAll(vbox_topbar, vbox_post); // Ajoute le fond et l'en tête à la page
         vbox_principal.setSpacing(20); // Ajoute un espacement entre les éléments de la page
 
-        fond.getChildren().addAll( vbox_fond,vbox_principal); // le stack pane recupère la vbox et ajoute le fond
+        fond.getChildren().addAll(vbox_fond,vbox_principal); // le stack pane recupère la vbox et ajoute le fond
         
         this.setContent(fond); // le scrollpane récupère le stackpane et affiche la scrollbar
 
-        // gère le bouton poster
-        this.bouton_poster.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                String choix_du_post = new String(type_post.getValue()); // récupère le choix de l'utilisateur pour son post
-                
-                // Gère le cas où l'utilisateur a choisi de poster une Image
-                if (choix_du_post.equals("Image")){ 
+        this.gestionPost(un_autre_Stage); // Gère les posts de la page
 
-                    TextArea champ_titre = new TextArea(); // Définition de la zone d'édition du texte
-                    Label texte_du_titre = new Label(); // futur variable qui va contenir le texte
-                    Button bouton_valider_titre = new Button("Poster");
-                    champ_titre.setMaxWidth(200);// fie la longueur du champ de texte
-                    champ_titre.setPrefHeight(30); // fixe la hauteur du champ de texte
-                    champ_titre.setPromptText("Ecrivez votre titre ici");
-                    vbox_post.getChildren().addAll(champ_titre, bouton_valider_titre); // Ajoute le champ de texte à la page
-
-                    // Gère le bouton valider pour
-                    bouton_valider_titre.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent event) {
-                            texte_du_titre.setText(champ_titre.getText()); // Crée un texte à partir du champ de texte
-                            texte_du_titre.underlineProperty().set(true); // souligne le texte
-                            texte_du_titre.setFont(Font.font("System", FontWeight.BOLD, 15)); // change la police d'écriture et la passe en gras
-                            
-                            vbox_post.getChildren().remove(champ_titre); // Retire le champ de texte de la page
-                            vbox_post.getChildren().remove(bouton_valider_titre); // Supprime le bouton valider de la page
-                            vbox_post.getChildren().add(texte_du_titre); // Supprime le bouton valider de la page
-                            
-                            // Définition de la boite de dialogue pour choisir un fichier image 
-                            FileChooser choix_fichier = new FileChooser();
-                            // Filtre les fichiers sélectionnables
-                            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.gif)", "*.png", "*.gif");
-                            choix_fichier.getExtensionFilters().add(extFilter);
-                            File fichier_choisi = choix_fichier.showOpenDialog(un_autre_Stage); // affiche la boite de dialogue
-                            
-                            if(fichier_choisi == null)
-                                ; // ne fait rien si l'utilisateur n'a rien sélectionné
-                            
-                            else {
-                                // Récupération du chemin du fichier image
-                                String chemin = new String(fichier_choisi.getAbsolutePath());
-                                ImageView image = new ImageView(new Image("file:///" + chemin));
-            
-                                image.setFitWidth(600); // Règle les dimensions de l'image
-                                image.setFitHeight(400);
-                                image.setPreserveRatio(true); // Garde les proportions de l'image
-        
-                                mise_en_page_post(image, false); // affiche les posts avec les boutons like, commenter et supprimer
-                                
-                            }
-                        }
-                    });
-                }
-
-                else if (choix_du_post.equals("Texte")){ // Gère le cas où l'utilisateur a choisi de poster du texte
-                    TextArea champ_texte = new TextArea(); // Définition de la zone d'édition du texte
-                    Label texte_du_post = new Label(); // futur variable qui va contenir le texte
-                    Button bouton_valider_post = new Button("Poster");
-                    champ_texte.setPrefWidth(TAILLE_FIELD_TEXTE); // Fixe la taille de la zone d'édition
-                    champ_texte.setPromptText("Ecrivez votre Poste ici");
-                    vbox_post.getChildren().addAll(champ_texte, bouton_valider_post); // Ajoute le champ de texte à la page
-                    
-                    // gère ce que fait le bouton valider
-                    bouton_valider_post.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent event) {
-                            texte_du_post.setText(champ_texte.getText()); // Crée un texte à partir du champ de texte
-                            vbox_post.getChildren().remove(champ_texte); // Retire le champ de texte de la page
-                            vbox_post.getChildren().remove(bouton_valider_post); // Supprime le bouton valider de la page
-                            
-                            mise_en_page_post(texte_du_post, true); // affiche les posts avec les boutons like, commenter et supprimer
-                            
-                        }
-
-                    });
-                }
-                
-                else if (choix_du_post.equals("Vidéo")){ // Gère le cas où l'utilisateur a choisi de poster une vidéo
-                // Définition de la boite de dialogue pour choisir un fichier vidéo
-                // FileChooser choix_fichier = new FileChooser();
-                // FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Video files (*.mp4, *.flv, *.webv)", "*.mp4", "*.flv");
-                // choix_fichier.getExtensionFilters().add(extFilter);
-                // File fichier_choisi = choix_fichier.showOpenDialog(un_autre_Stage);
-                
-                // if(fichier_choisi == null)
-                //     ; // ne fait rien si l'utilisateur n'a rien sélectionné
-                
-                // else {
-                    //     // Utilise selectedDirectory
-                    //     String chemin = new String(fichier_choisi.getAbsolutePath());
-                    //   // Créez un objet Media
-                    // EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
-                    // EmbeddedMediaPlayer mediaPlayer = mediaPlayerComponent.mediaPlayer();
-                    
-                    // mediaPlayer.media().play("file:///" + chemin);
-                    
-                    // // Créez un objet MediaView
-                    // MediaView mediaView = new MediaView(mediaPlayer);
-                    // mediaView.setFitWidth(600); // Règle la largeur de la vidéo à 600 pixels
-                    // mediaView.setFitHeight(400); // Règle la hauteur de la vidéo à 400 pixels
-                    
-                    // // Ajoutez le MediaView à votre VBox
-                    // vbox_post.getChildren().add(mediaView);
-                    
-                    // // Lancez la vidéo
-                    // mediaPlayer.play();t.getChildren().add(mediaView); // ajout de l'image à la vbox et donc à la page
-                    // }
-                }
-                
-
-                
-                
-            }
-        });
     }
     
     
     public static StackPane mise_en_page_texte(Node node){
         /*
-         * Méthode statique qui met en forme un texte reçu d'une textearea
+         * Méthode statique qui met en forme un texte reçu d'une texteArea
          * 
          */
             StackPane mise_en_forme_texte = new StackPane(); // Création du stackpane pour mettre en forme le texte et le rectangle
@@ -357,5 +159,249 @@ public class viewPrincipal extends ScrollPane {
                 vbox_post.getChildren().add(vbox_mise_en_forme_post);
             }
     }
-    
+
+
+    private void barre_de_menu(){
+        /*
+         * Méthode qui crée une barre de menu pour la page
+         * 
+         */
+        menu_ami.getItems().addAll(menu_liste_ami, menu_liste_bloque); // ajout des éléments à l'option menu ami
+        menu_se_deconnecter.getItems().addAll(menu_deconnexion); // ajout des éléments à l'option menu se déconnecter
+
+        // Ajouter le menu à la barre de menu
+        menuBar.getMenus().addAll(menu_ami, menu_se_deconnecter); // ajout des éléments à la barre de menu
+
+        // Gère le bouton d'affichage de la liste d'amis
+        menu_ami.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Créer une nouvelle fenêtre
+                Stage nouvelle_fenetre = new Stage();
+                Tableau_follower tableau_follower = new Tableau_follower();
+                try {
+                    tableau_follower.start(nouvelle_fenetre);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+            }
+        });
+
+        // Gère le bouton d'affichage de la liste des bloqués
+        menu_liste_bloque.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Créer une nouvelle fenêtre
+                Stage nouvelle_fenetre_bloque = new Stage();
+                Tableau_bloque tableau_bloque = new Tableau_bloque();
+                try {
+                    tableau_bloque.start(nouvelle_fenetre_bloque);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+            }
+        });
+
+        // Ajouter la barre de menu à la boîte de mise en page verticale (VBox)
+        vbox_principal.getChildren().add(menuBar); // ajout de la barre de menu à la page
+    }
+
+    private void enTetePage(){
+        /*
+         * Méthode qui crée l'en tête de la page
+         * 
+         */
+        topBar.setAlignment(Pos.TOP_CENTER);
+        topBar.setSpacing(40); // Ajoute un espacement entre les éléments de l'en tête
+        titre_fenetre_principal.setText(TITRE_FENETRE); // Définit le titre de la page (à modifier plus tard
+        titre_fenetre_principal.setFont(Font.font(20)); // fixe la police d'écriture
+        titre_fenetre_principal.setTranslateY(40); // Centre le titre de la page
+        titre_fenetre_principal.setFont(Font.font("System", FontWeight.BOLD, 20)); // change la police d'écriture et la passe en gras
+
+     
+
+        barre_recherche.setPrefWidth(400); // Règle la taille de la barre de recherche
+        titre_recherche.setLabelFor(barre_recherche);
+        titre_recherche.setFont(Font.font("System", FontWeight.BOLD, 15)); // change la police d'écriture et la passe en gras
+        vbox_recherche.setAlignment(Pos.CENTER);
+        vbox_recherche.getChildren().addAll(titre_recherche, barre_recherche); // Ajoute les éléments à la barre de recherche
+
+        type_post.getItems().addAll("Texte", "Image", "Vidéo"); // Ajoute les éléments à la liste déroulante
+        titre_post.setLabelFor(type_post);
+        titre_post.setFont(Font.font("System", FontWeight.BOLD, 15)); // change la police d'écriture et la passe en gras
+        vbox_choix_post.getChildren().addAll(titre_post, type_post, bouton_poster); // Ajoute les éléments à la liste déroulante
+        vbox_choix_post.setAlignment(Pos.CENTER);
+        vbox_choix_post.setSpacing(5);
+
+        vbox_post.setAlignment(Pos.CENTER); // Permet de centrer les pots et de les aligner à la verticale
+        
+        topBar.getChildren().addAll(vbox_recherche ,titre_fenetre_principal, vbox_choix_post); // Ajoute les éléments à la barre de recherche
+        
+        // Gestion du séparateur de l'en tête
+        separateur_top_barre.setStartX(0.0f); // Point de départ
+        separateur_top_barre.setStartY(0.0f);
+        separateur_top_barre.setEndX(LARGEUR_FENETRE); // Défini la longueur du séparateur
+        separateur_top_barre.setEndY(0.0f);
+        separateur_top_barre.setStrokeWidth(3.0f); 
+        separateur_top_barre.setStroke(Color.BLACK); // Change la couleur de la ligne en noir
+
+        vbox_topbar.getChildren().addAll(topBar, separateur_top_barre); 
+        vbox_topbar.setSpacing(10); // Ajoute un espacement entre les éléments de l'en tête
+    }
+
+    private void gestionFond(){
+        /*
+         * Méthode qui ajoute les fonds à la fenetre
+         * 
+         */
+        backgroundImage.fitWidthProperty().bind(this.widthProperty()); // Règle les dimensions de l'image
+        backgroundImage.fitHeightProperty().bind(this.heightProperty());
+        backgroundImage2.fitWidthProperty().bind(this.widthProperty()); // Règle les dimensions de l'image
+        backgroundImage2.fitHeightProperty().bind(this.heightProperty());
+        backgroundImage3.fitWidthProperty().bind(this.widthProperty()); // Règle les dimensions de l'image
+        backgroundImage3.fitHeightProperty().bind(this.heightProperty());
+        backgroundImage4.fitWidthProperty().bind(this.widthProperty()); // Règle les dimensions de l'image
+        backgroundImage4.fitHeightProperty().bind(this.heightProperty());
+        backgroundImage5.fitWidthProperty().bind(this.widthProperty()); // Règle les dimensions de l'image
+        backgroundImage5.fitHeightProperty().bind(this.heightProperty());
+
+         // Ajout de tous les fonds à la vbox pour créer le fond d'écran (les aligne à la verticale)
+         vbox_fond.getChildren().addAll(backgroundImage, backgroundImage2,  backgroundImage3,  backgroundImage4,  backgroundImage5); 
+       
+    } 
+
+    private void gestionPost(Stage un_exemple_de_stage){
+        // gère le bouton poster
+        this.bouton_poster.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                String choix_du_post = new String(type_post.getValue()); // récupère le choix de l'utilisateur pour son post
+                
+                // Gère le cas où l'utilisateur a choisi de poster une Image
+                if (choix_du_post.equals("Image")){ 
+
+                    gestionImage(un_exemple_de_stage);
+                   
+                }
+
+                else if (choix_du_post.equals("Texte")){ // Gère le cas où l'utilisateur a choisi de poster du texte
+                    
+                    gestionTexte();
+                }
+
+                  
+                
+                else if (choix_du_post.equals("Vidéo")){ // Gère le cas où l'utilisateur a choisi de poster une vidéo
+                // Définition de la boite de dialogue pour choisir un fichier vidéo
+                // FileChooser choix_fichier = new FileChooser();
+                // FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Video files (*.mp4, *.flv, *.webv)", "*.mp4", "*.flv");
+                // choix_fichier.getExtensionFilters().add(extFilter);
+                // File fichier_choisi = choix_fichier.showOpenDialog(un_exemple_de_stage);
+                
+                // if(fichier_choisi == null)
+                //     ; // ne fait rien si l'utilisateur n'a rien sélectionné
+                
+                // else {
+                    //     // Utilise selectedDirectory
+                    //     String chemin = new String(fichier_choisi.getAbsolutePath());
+                    //   // Créez un objet Media
+                    // EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
+                    // EmbeddedMediaPlayer mediaPlayer = mediaPlayerComponent.mediaPlayer();
+                    
+                    // mediaPlayer.media().play("file:///" + chemin);
+                    
+                    // // Créez un objet MediaView
+                    // MediaView mediaView = new MediaView(mediaPlayer);
+                    // mediaView.setFitWidth(600); // Règle la largeur de la vidéo à 600 pixels
+                    // mediaView.setFitHeight(400); // Règle la hauteur de la vidéo à 400 pixels
+                    
+                    // // Ajoutez le MediaView à votre VBox
+                    // vbox_post.getChildren().add(mediaView);
+                    
+                    // // Lancez la vidéo
+                    // mediaPlayer.play();t.getChildren().add(mediaView); // ajout de l'image à la vbox et donc à la page
+                    // }
+                }
+                
+            }
+        });
+    }
+
+    private void gestionImage(Stage un_autrestage){
+        /*
+         * Méthode qui gère la mise en forme des post de type image sur la page
+         * 
+         */
+        champ_titre.setMaxWidth(200);// fie la longueur du champ de texte
+        champ_titre.setPrefHeight(30); // fixe la hauteur du champ de texte
+        champ_titre.setPromptText("Ecrivez votre titre ici");
+        vbox_post.getChildren().addAll(champ_titre, bouton_valider_titre); // Ajoute le champ de texte à la page
+
+        // Gère le bouton valider pour
+        bouton_valider_titre.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                texte_du_titre.setText(champ_titre.getText()); // Crée un texte à partir du champ de texte
+                texte_du_titre.underlineProperty().set(true); // souligne le texte
+                texte_du_titre.setFont(Font.font("System", FontWeight.BOLD, 15)); // change la police d'écriture et la passe en gras
+                
+                vbox_post.getChildren().remove(champ_titre); // Retire le champ de texte de la page
+                vbox_post.getChildren().remove(bouton_valider_titre); // Supprime le bouton valider de la page
+                vbox_post.getChildren().add(texte_du_titre); // Supprime le bouton valider de la page
+                
+                // Définition de la boite de dialogue pour choisir un fichier image 
+                FileChooser choix_fichier = new FileChooser();
+                // Filtre les fichiers sélectionnables
+                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image files (*.png, *.gif)", "*.png", "*.gif");
+                choix_fichier.getExtensionFilters().add(extFilter);
+                File fichier_choisi = choix_fichier.showOpenDialog(un_autrestage); // affiche la boite de dialogue
+                
+                if(fichier_choisi == null)
+                    ; // ne fait rien si l'utilisateur n'a rien sélectionné
+                
+                else {
+                    // Récupération du chemin du fichier image
+                    String chemin = new String(fichier_choisi.getAbsolutePath());
+                    ImageView image = new ImageView(new Image("file:///" + chemin));
+
+                    image.setFitWidth(600); // Règle les dimensions de l'image
+                    image.setFitHeight(400);
+                    image.setPreserveRatio(true); // Garde les proportions de l'image
+
+                    mise_en_page_post(image, false); // affiche les posts avec les boutons like, commenter et supprimer
+                    
+                        }
+                    }
+                });
+    }
+
+
+
+    private void gestionTexte(){
+        /*
+         * Méthode qui gère la mise en forme des post de type texte sur la page
+         * 
+         */
+        TextArea champ_texte = new TextArea(); // Définition de la zone d'édition du texte
+        Label texte_du_post = new Label(); // futur variable qui va contenir le texte
+        Button bouton_valider_post = new Button("Poster");
+        champ_texte.setPrefWidth(TAILLE_FIELD_TEXTE); // Fixe la taille de la zone d'édition
+        champ_texte.setPromptText("Ecrivez votre Poste ici");
+        vbox_post.getChildren().addAll(champ_texte, bouton_valider_post); // Ajoute le champ de texte à la page
+        
+        // gère ce que fait le bouton valider
+        bouton_valider_post.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                texte_du_post.setText(champ_texte.getText()); // Crée un texte à partir du champ de texte
+                vbox_post.getChildren().remove(champ_texte); // Retire le champ de texte de la page
+                vbox_post.getChildren().remove(bouton_valider_post); // Supprime le bouton valider de la page
+                
+                mise_en_page_post(texte_du_post, true); // affiche les posts avec les boutons like, commenter et supprimer
+                            
+            }
+        });
+    }
 }

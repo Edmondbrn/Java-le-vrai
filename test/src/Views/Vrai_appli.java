@@ -74,6 +74,7 @@ public class Vrai_appli extends Application implements Interface_scene{
     public static void main (String[] args){
         launch(args);
     }
+    
 
     public void setscene_visible(Stage unStage, Scene uneScene){
         unStage.setScene(uneScene);
