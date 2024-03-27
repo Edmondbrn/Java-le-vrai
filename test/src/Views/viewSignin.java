@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-// import javafx.scene.control.TextArea; // Pour les textes longs comme des commentaires de posts :)
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -46,12 +45,11 @@ public class viewSignin extends StackPane{
         Label Titre_password2 = new Label("Entrer votre mot de passe une nouvelle fois");
         PasswordField slot_password2 = new PasswordField();
 
-        Label titre_id = new Label("Entrer votre email");
-        TextField slot_id = new TextField();
+     
 
         Rectangle rectangle = new Rectangle (500, 500);
 
-        Button btn_valider_inscription = new Button("Valider");
+        public Button btn_valider_inscription = new Button("Valider");
         public Button bouton_retour_inscription = new Button("Retour");
 
         VBox vbox = new VBox(10);
@@ -73,8 +71,7 @@ public class viewSignin extends StackPane{
             slot_mdp.setMaxWidth(400);
             slot_password2.setMaxWidth(400);
     
-            titre_id.setFont(Font.font(15));
-            slot_id.setMaxWidth(400);
+      
     
             Titre_nom.setFont(Font.font(15));
             Titre_prenom.setFont(Font.font(15));
@@ -97,7 +94,7 @@ public class viewSignin extends StackPane{
             vbox.setAlignment(Pos.CENTER); // Alignez les éléments au centre verticalement
 
             // Ajout éléments à Vbox pour qu'ils soient alignés automatiquement
-            vbox.getChildren().addAll(titre_fenetre, Titre_nom, slot_nom,Titre_prenom, slot_prenom, titre_id, slot_id, 
+            vbox.getChildren().addAll(titre_fenetre, Titre_nom, slot_nom,Titre_prenom, slot_prenom, 
                                             titre_mdp, slot_mdp, Titre_password2, slot_password2, Titre_anniverssaire , 
                                             date_anniversaire, btn_valider_inscription, bouton_retour_inscription);
     
@@ -106,7 +103,5 @@ public class viewSignin extends StackPane{
 
         }
 
-        public VBox getVBox(){
-            return this.vbox;
-        }
+       
 }

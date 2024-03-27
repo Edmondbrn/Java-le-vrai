@@ -10,20 +10,35 @@ public class User {
     private String nom = new String();
     private String prenom = new String();
     private String password = new String();
+    private int id_mur;
     private ArrayList<String> liste_bloque;
     private ArrayList<String> liste_ami;
     private ArrayList<HashMap<String, Object>> liste_post;
-
+    private String id_user;
     
-    public User(String mail, String nom, String prenom, String password, ArrayList<String> liste_bloque,
-                 ArrayList<String> liste_amis , ArrayList<HashMap <String, Object>> info_liste_post) {
-        this.mail = mail;
+    public User(){
+        this.mail = "default";
+        this.nom = "default";
+        this.prenom = "default";
+        this.password = "default";
+        this.liste_bloque = new ArrayList<String>();
+        this.liste_ami = new ArrayList<String>();
+        this.liste_post = new ArrayList<HashMap<String, Object>>();
+        this.id_mur = 0;
+        this.id_user = "default";
+    }
+
+
+    public User(int id_du_mur, String nom, String prenom, String password, ArrayList<String> liste_bloque,
+                 ArrayList<String> liste_amis , ArrayList<HashMap <String, Object>> info_liste_post, String id_du_user) {
         this.nom = nom;
         this.prenom = prenom;
         this.password = password;
         this.liste_bloque = liste_bloque;
         this.liste_ami = liste_amis;
         this.liste_post = info_liste_post;
+        this.id_mur = id_du_mur;
+        this.id_user = id_du_user;
     }
 
 
@@ -32,6 +47,9 @@ public class User {
         return this.mail;
     }
 
+    public int getId_mur() {
+        return this.id_mur;
+    }
 
     public String getNom() {
         return this.nom;
@@ -45,6 +63,10 @@ public class User {
 
     public String getPassword() {
         return this.password;
+    }
+
+    public String getId_user() {
+        return this.id_user;
     }
 
 
@@ -72,6 +94,14 @@ public class User {
 
     public void setPrenom(String prenom) {
         this.prenom = prenom;
+    }
+
+    public void setId_mur(int id_mur) {
+        this.id_mur = id_mur;
+    }
+
+    public void setId_user(String id_user) {
+        this.id_user = id_user;
     }
 
     public void setPassword(String password) {
@@ -110,7 +140,7 @@ public class User {
 
     public static void main (String[] args){
         System.out.println("Test de la classe User");
-        User user = new User("admin@admin.com", "Bernard", "Julie", "1234", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<HashMap <String, Object>>());
+        User user = new User(0, "Bernard", "Julie", "1234", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<HashMap <String, Object>>());
         user.setListe_ami_ajout("Angie");
         user.setListe_bloque_ajout("Garcia");
         user.setListe_bloque_ajout("Zurletto");

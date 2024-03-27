@@ -40,7 +40,7 @@ public class viewLogin extends StackPane{
     Rectangle rectangle = new Rectangle (550, 300);
     
     public viewLogin(double spacing, Stage unStage) {
-        super(); // constructeur de Stackplane
+        super(); // constructeur de Stackpane
         
         backgroundImage.fitWidthProperty().bind(this.widthProperty()); // Règle les dimensions de l'image
         backgroundImage.fitHeightProperty().bind(this.heightProperty());
@@ -74,18 +74,10 @@ public class viewLogin extends StackPane{
 
         // Ajout image de fond et la VBox à la liste des éléments du StackPane
         components.addAll(backgroundImage, rectangle, vbox);
-        
-        
-        // Gère ce que fait le bouton S'inscrire
-        
-        
-
-      
-        
+           
 
     }
     
-    // Mutateur de la liste contenant les élements de la scène pour passer d'une page à une autre
    
     // Accesseur qui renvoie la liste des éléments de la page d'origine pour la recharger au cas où
     public VBox getVbox(){

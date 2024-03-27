@@ -2,7 +2,11 @@ package Views;
 
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+
+import Views.Utilisateur.User;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -65,7 +69,7 @@ public class viewPrincipal extends ScrollPane {
     ChoiceBox<String> type_post = new ChoiceBox<String>();
     Label titre_post = new Label("Sélection du type de post");
     VBox vbox_choix_post = new VBox();
-    static VBox vbox_post = new VBox(20);
+    VBox vbox_post = new VBox(20);
     VBox vbox_fond = new VBox();
     // Element de la barre de menu
     MenuBar menuBar = new MenuBar();
@@ -81,6 +85,7 @@ public class viewPrincipal extends ScrollPane {
     Label texte_du_titre = new Label(); // futur variable qui va contenir le texte
     Button bouton_valider_titre = new Button("Poster");
 
+    // Constructeur de la viewPrincipal
     public viewPrincipal(Stage un_autre_Stage){ // user à rajouter
 
         vbox_principal.setAlignment(Pos.TOP_CENTER); // Centre les éléments de la page
@@ -98,10 +103,69 @@ public class viewPrincipal extends ScrollPane {
 
         this.gestionPost(un_autre_Stage); // Gère les posts de la page
 
+        User un_utilisateur = creation_USER(new viewLogin(5, un_autre_Stage)); // Crée un utilisateur
+        Requete moteur_de_requete_mur = new Requete(); // Crée un moteur de requête pour récupérer les posts de l'utilisateur
+        this.info_post_mur(un_utilisateur, moteur_de_requete_mur); // Récupère les posts de l'utilisateur
+
     }
     
+    public User creation_USER(viewLogin viewconnexion){
+        /*
+         * Méthode qui crée un utilisateur
+         * 
+         */
+        User un_utilisateur = new User(); 
+        String id_utilisateur = new String(viewconnexion.slot_id.getText());
+        String mdp_utilisateur = new String(viewconnexion.slot_mdp.getText());
+        un_utilisateur.setId_user(id_utilisateur);
+        un_utilisateur.setPassword(mdp_utilisateur);
+
+        return un_utilisateur;
+    }
+
+    public void info_post_mur(User un_utilisateur, Requete moteur_de_Requete){
+        /*
+         * Méthode qui récupère les posts déjà présents sur le mur de l'utilisateur
+         */
+
+        // Récupération des posts de l'utilisateur
+        String selection_id_user = new String("SELECT idU FROM USERS WHERE login = '" + un_utilisateur.getId_user().toLowerCase() + "' ;"); // sélection de l'idU de l'utilisateur
+        ArrayList<String> liste_id_user = moteur_de_Requete.parcoursTableSQL(selection_id_user, "idU");
+        if (!liste_id_user.isEmpty()){ // si la liste n'est pas vide, donc si l'utilisateur existe
+            String id_user = new String(liste_id_user.get(0)); // recuperation de l'id de l'utilisateur
+            String requete_sql = "Select Type_posts, texte from USERS inner join POSTS ON USERS.idU = POSTS. \"#idU\" WHERE POSTS.idP not in (SELECT \"#idP_Rep\" from COMMENTS) AND Users.idU ='" + id_user + "';"; // requete pour récupérer le texte des posts et leurs types
+            ArrayList<String> liste__texte_poste_utilisateur = moteur_de_Requete.parcoursTableSQL(requete_sql, "texte"); // liste des textes des posts
+            ArrayList<String> liste__type_poste_utilisateur = moteur_de_Requete.parcoursTableSQL(requete_sql, "Type_posts"); // lise des types des posts
+            HashMap<String, String> dico_post_utilisateur = new HashMap<String, String>(); // dictionnaire pour faire le lien entre les 2 listes
+            
+            //  Boucle pour remplir le dictionnaire
+            for (int i = 0; i < liste__texte_poste_utilisateur.size(); i++){
+                dico_post_utilisateur.put(liste__texte_poste_utilisateur.get(i), liste__type_poste_utilisateur.get(i));
+            }
+            // Boucle pour afficher les posts
+            for (String texte : dico_post_utilisateur.keySet()){
+                Label texte_du_post = new Label(texte);
+                if (dico_post_utilisateur.get(texte).equals("Texte")){ // si le post est un texte on lui applique le traitement approprié
+                    mise_en_page_post(texte_du_post, true);
+                }
+                else if (dico_post_utilisateur.get(texte).equals("Image")){ // si c'est une image on doit la traiter un peu
+                    // Cette requete permet de récupérer les url des images en supposant que le titre de l'image (texte) est unique (ce qui est le cas dans notre cas)
+                    String requete_sql_bis = new String("SELECT * FROM POSTS where POSTS.texte = '" + texte + "' ;");
+                    ArrayList<String> liste_URL_image =  moteur_de_Requete.parcoursTableSQL(requete_sql_bis, "urlIMG");
+                    ImageView image = new ImageView(new Image(liste_URL_image.get(0)));
+
+                    image.setFitWidth(600); // Règle les dimensions de l'image
+                    image.setFitHeight(400);
+                    image.setPreserveRatio(true); // Garde les proportions de l'image
+                    gestionTitreImage(texte_du_post); // Gère le titre de l'image
+                    mise_en_page_post(image, false); // affiche les posts avec les boutons like, commenter et supprimer
+                    
+                }
+            }
+        }
+    }
     
-    public static StackPane mise_en_page_texte(Node node){
+    private StackPane mise_en_page_texte(Node node){
         /*
          * Méthode statique qui met en forme un texte reçu d'une texteArea
          * 
@@ -110,7 +174,7 @@ public class viewPrincipal extends ScrollPane {
             Rectangle rectangle_texte = new Rectangle();
             Label labelNode = (Label) node; // cast de node en label pour récupérer la largeur et la hauteur du texte
            
-            //Bout de code généré par Copilat de github
+            //Bout de code généré par Copilot de github
             // Ajoute un ChangeListener à la propriété widthProperty du label
             labelNode.widthProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
                 // Met à jour la largeur du rectangle pour correspondre à la largeur du label
@@ -133,9 +197,9 @@ public class viewPrincipal extends ScrollPane {
             return mise_en_forme_texte;
         }
 
-        public static void mise_en_page_post(Node node, boolean texte){ // les images et les texte de javafx héritent de la classe Node
+        public void mise_en_page_post(Node node, boolean texte){ // les images et les texte de javafx héritent de la classe Node
             /*
-            * Méthode statiques pour met en forme tous les posts avec les boutons like, commenter et supprimer
+            * Méthode pour mettre en forme tous les posts avec les boutons like, commenter et supprimer
             */
             VBox vbox_mise_en_forme_post = new VBox();
             HBox hbox_boutons_action_post = new HBox(15);
@@ -343,13 +407,12 @@ public class viewPrincipal extends ScrollPane {
         bouton_valider_titre.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+
                 texte_du_titre.setText(champ_titre.getText()); // Crée un texte à partir du champ de texte
-                texte_du_titre.underlineProperty().set(true); // souligne le texte
-                texte_du_titre.setFont(Font.font("System", FontWeight.BOLD, 15)); // change la police d'écriture et la passe en gras
-                
+                gestionTitreImage(texte_du_titre); // Gère le titre de l'image
+               
                 vbox_post.getChildren().remove(champ_titre); // Retire le champ de texte de la page
                 vbox_post.getChildren().remove(bouton_valider_titre); // Supprime le bouton valider de la page
-                vbox_post.getChildren().add(texte_du_titre); // Supprime le bouton valider de la page
                 
                 // Définition de la boite de dialogue pour choisir un fichier image 
                 FileChooser choix_fichier = new FileChooser();
@@ -375,6 +438,17 @@ public class viewPrincipal extends ScrollPane {
                         }
                     }
                 });
+    }
+
+    private void gestionTitreImage(Label  titre_image){
+        /*
+         * Méthode qui gère la mise en forme du titre d'une image
+         * 
+         */
+        titre_image.underlineProperty().set(true); // souligne le texte
+        titre_image.setFont(Font.font("System", FontWeight.BOLD, 15)); // change la police d'écriture et la passe en gras
+        vbox_post.getChildren().add(titre_image); // Ajoute le titre de l'image à la page
+
     }
 
 
