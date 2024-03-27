@@ -10,12 +10,12 @@ public class Post_photo extends Post_texte{ // classe qui hérite de Post_texte 
     private String format_image = new String();
     private String image;
 
-    public Post_photo(String nom_auteur, String titre_image, int like, ArrayList<String> commentaire, String format_photo, String url_image, Date date_image){
-        super(nom_auteur, titre_image, like, commentaire, date_image);
-        format_image = format_photo;
-        this.image = url_image;
+    // public Post_photo(String nom_auteur, String titre_image, int like, ArrayList<String> commentaire, String format_photo, String url_image, Date date_image){
+    //     super(nom_auteur, titre_image, like, commentaire, date_image);
+    //     format_image = format_photo;
+    //     this.image = url_image;
 
-    }
+    // }
 
     public String getFormat_image(){
         return this.format_image;
@@ -41,10 +41,5 @@ public class Post_photo extends Post_texte{ // classe qui hérite de Post_texte 
     return dico;
 }
 
-    public static void main (String[] args){
-        Post_photo post_image2 = new Post_photo("Jean", "Super photo", 0, new ArrayList<>(), "800:600", "url", new Date());    
     
-        System.out.println(post_image2.dico_post());
-
-    }
 }

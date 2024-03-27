@@ -5,31 +5,35 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Views.Requete;
+
 public class Post_texte {
 
     protected String auteur = new String();
-    protected String contenu = new String();
+    protected String texte = new String();
     protected int nbr_like;
     protected ArrayList <String> liste_commentaire;
     protected Date date_post;
     protected DateFormat shortDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT); // prepare la forme de la date jour/mois/année
 
+    protected Requete moteur_de_Requete = new Requete();
+
     // Constructeur de base de l'objet Post_texte
     public Post_texte(){
         auteur = "";
-        contenu = "";
+        texte = "";
         nbr_like = 0;
         liste_commentaire = new ArrayList<>();
         date_post = new Date();
 
     }
     // Constructeur élaboré de l'objet Post_texte
-    public Post_texte(String nom_auteur, String texte_du_post, int like, ArrayList<String> commentaire, Date date_origine_post){
+    public Post_texte(String nom_auteur, String texte_du_post, int like, ArrayList<String> commentaire){
         auteur = nom_auteur;
-        contenu = texte_du_post;
+        texte = texte_du_post;
         nbr_like = like;
         liste_commentaire = new ArrayList<String>(commentaire);
-        date_post = date_origine_post;
+        date_post = new Date();
     }
 
     // Accesseur
@@ -49,8 +53,8 @@ public class Post_texte {
         return shortDateFormat.format(this.date_post);
     }
 
-    public String getContenu(){
-        return this.contenu;
+    public String gettexte(){
+        return this.texte;
     }
     
 
@@ -78,7 +82,7 @@ public class Post_texte {
     public HashMap<String, Object> dico_post(){
         HashMap<String, Object> post = new HashMap<String, Object>();
         post.put("auteur", this.getAuteur());
-        post.put("contenu", this.getContenu());
+        post.put("texte", this.gettexte());
         post.put("nbr_like", this.getLike());
         post.put("liste_commentaire", this.getCommentaire());
         post.put("date_post", this.getDate());
@@ -86,12 +90,30 @@ public class Post_texte {
     }
 
     public String toString(){
-        return "Auteur : " + this.auteur + " Contenu : " + this.contenu + " Nombre de like : " + this.nbr_like + " Commentaire : " + this.liste_commentaire + " Date : " + getDate();
+        return "Auteur : " + this.auteur + " texte : " + this.texte + " Nombre de like : " + this.nbr_like + " Commentaire : " + this.liste_commentaire + " Date : " + getDate();
     }
-    public static void main (String[] args){
-        Post_texte post = new Post_texte("Jean", "Ceci est mon post",5, new ArrayList<String>(), new Date());
-        System.out.println(post);
-        System.out.println(post.dico_post());
+
+    public void insertion_BDD_post(HashMap <String , Object> dico_info_post ){
+        // On insère les informations du post dans la base de données
+
+        String requete_SQL_insertion = "INSERT INTO POSTS (texte, format, urlIMG, urlVID, duree, dateC, dateM, \"#idU\", \"#idW\", Type_posts) VALUES ('" 
+        + dico_info_post.get("texte") + "', '"
+        + dico_info_post.get("format") + "', '"
+        + dico_info_post.get("urlIMG") + "', '"
+        + dico_info_post.get("urlVID") + "', '"
+        + dico_info_post.get("duree") + "', '"
+        + dico_info_post.get("dateC") + "', '"
+        + dico_info_post.get("dateM") + "', '"
+        + dico_info_post.get("#idU") + "', '"
+        + dico_info_post.get("#idW") + "', '"
+        + dico_info_post.get("Type_posts") + "');";
+
+        moteur_de_Requete.insertion_sql(requete_SQL_insertion);
+
+    
     }
+
+
+    
  
 }

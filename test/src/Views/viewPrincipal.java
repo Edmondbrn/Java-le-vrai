@@ -5,7 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
+import Views.Utilisateur.Post_texte;
 import Views.Utilisateur.User;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -80,14 +80,19 @@ public class viewPrincipal extends ScrollPane {
     public MenuItem menu_deconnexion = new MenuItem("Déconnexion");
     
     Button bouton_poster = new Button("Poster");
-
+    
     TextArea champ_titre = new TextArea(); // Définition de la zone d'édition du texte
     Label texte_du_titre = new Label(); // futur variable qui va contenir le texte
     Button bouton_valider_titre = new Button("Poster");
-
+    
+    Label texte_du_post = new Label(); // futur variable qui va contenir le texte
+    
+    Requete moteur_de_requete_mur = new Requete(); // Crée un moteur de requête pour récupérer les posts de l'utilisateur
+    
     // Constructeur de la viewPrincipal
     public viewPrincipal(Stage un_autre_Stage){ // user à rajouter
-
+        
+        User un_utilisateur_admin = creation_USER(new viewLogin(5, un_autre_Stage)); // Crée un utilisateur
         vbox_principal.setAlignment(Pos.TOP_CENTER); // Centre les éléments de la page
         
         this.barre_de_menu(); // Ajoute la barre de menu à la page
@@ -96,44 +101,42 @@ public class viewPrincipal extends ScrollPane {
         
         vbox_principal.getChildren().addAll(vbox_topbar, vbox_post); // Ajoute le fond et l'en tête à la page
         vbox_principal.setSpacing(20); // Ajoute un espacement entre les éléments de la page
-
+        
         fond.getChildren().addAll(vbox_fond,vbox_principal); // le stack pane recupère la vbox et ajoute le fond
         
         this.setContent(fond); // le scrollpane récupère le stackpane et affiche la scrollbar
-
-        this.gestionPost(un_autre_Stage); // Gère les posts de la page
-
-        User un_utilisateur = creation_USER(new viewLogin(5, un_autre_Stage)); // Crée un utilisateur
-        Requete moteur_de_requete_mur = new Requete(); // Crée un moteur de requête pour récupérer les posts de l'utilisateur
-        this.info_post_mur(un_utilisateur, moteur_de_requete_mur); // Récupère les posts de l'utilisateur
-
+        
+        this.gestionPost(un_autre_Stage, un_utilisateur_admin); // Gère les posts de la page
+        
+        this.info_post_mur(un_utilisateur_admin, moteur_de_requete_mur); // Récupère les posts de l'utilisateur
+        
     }
     
     public User creation_USER(viewLogin viewconnexion){
         /*
-         * Méthode qui crée un utilisateur
-         * 
-         */
+        * Méthode qui crée un utilisateur
+        * 
+        */
         User un_utilisateur = new User(); 
         String id_utilisateur = new String(viewconnexion.slot_id.getText());
         String mdp_utilisateur = new String(viewconnexion.slot_mdp.getText());
         un_utilisateur.setId_user(id_utilisateur);
         un_utilisateur.setPassword(mdp_utilisateur);
-
+        
         return un_utilisateur;
     }
-
-    public void info_post_mur(User un_utilisateur, Requete moteur_de_Requete){
+    
+    public void info_post_mur(User un_utilisateur_admin, Requete moteur_de_Requete){
         /*
-         * Méthode qui récupère les posts déjà présents sur le mur de l'utilisateur
-         */
-
+        * Méthode qui récupère les posts déjà présents sur le mur de l'utilisateur
+        */
+        
         // Récupération des posts de l'utilisateur
-        String selection_id_user = new String("SELECT idU FROM USERS WHERE login = '" + un_utilisateur.getId_user().toLowerCase() + "' ;"); // sélection de l'idU de l'utilisateur
+        String selection_id_user = new String("SELECT idU FROM USERS WHERE login = '" + un_utilisateur_admin.getId_user().toLowerCase() + "' ;"); // sélection de l'idU de l'utilisateur
         ArrayList<String> liste_id_user = moteur_de_Requete.parcoursTableSQL(selection_id_user, "idU");
         if (!liste_id_user.isEmpty()){ // si la liste n'est pas vide, donc si l'utilisateur existe
-            String id_user = new String(liste_id_user.get(0)); // recuperation de l'id de l'utilisateur
-            String requete_sql = "Select Type_posts, texte from USERS inner join POSTS ON USERS.idU = POSTS. \"#idU\" WHERE POSTS.idP not in (SELECT \"#idP_Rep\" from COMMENTS) AND Users.idU ='" + id_user + "';"; // requete pour récupérer le texte des posts et leurs types
+        String id_user = new String(liste_id_user.get(0)); // recuperation de l'id de l'utilisateur
+        String requete_sql = "Select Type_posts, texte from USERS inner join POSTS ON USERS.idU = POSTS. \"#idU\" WHERE POSTS.idP not in (SELECT \"#idP_Rep\" from COMMENTS) AND Users.idU ='" + id_user + "';"; // requete pour récupérer le texte des posts et leurs types
             ArrayList<String> liste__texte_poste_utilisateur = moteur_de_Requete.parcoursTableSQL(requete_sql, "texte"); // liste des textes des posts
             ArrayList<String> liste__type_poste_utilisateur = moteur_de_Requete.parcoursTableSQL(requete_sql, "Type_posts"); // lise des types des posts
             HashMap<String, String> dico_post_utilisateur = new HashMap<String, String>(); // dictionnaire pour faire le lien entre les 2 listes
@@ -336,7 +339,7 @@ public class viewPrincipal extends ScrollPane {
        
     } 
 
-    private void gestionPost(Stage un_exemple_de_stage){
+    private void gestionPost(Stage un_exemple_de_stage, User utilisateur_auteur){
         // gère le bouton poster
         this.bouton_poster.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -345,14 +348,35 @@ public class viewPrincipal extends ScrollPane {
                 
                 // Gère le cas où l'utilisateur a choisi de poster une Image
                 if (choix_du_post.equals("Image")){ 
-
-                    gestionImage(un_exemple_de_stage);
-                   
-                }
-
-                else if (choix_du_post.equals("Texte")){ // Gère le cas où l'utilisateur a choisi de poster du texte
                     
-                    gestionTexte();
+                    gestionImage(un_exemple_de_stage);
+                    
+                }
+                
+                else if (choix_du_post.equals("Texte")){ // Gère le cas où l'utilisateur a choisi de poster du texte
+                
+                Post_texte nouveau_post = new Post_texte(); // Crée un nouveau post
+                HashMap<String, Object> info_nouveau_post = new HashMap<String, Object>(); // Crée un dictionnaire pour stocker les informations du post
+                String requete_selection_id_user = new String("SELECT idU, idW FROM USERS INNER JOIN WALLS ON WALLS.\"#idU\" = USERS.idU WHERE login = '" + utilisateur_auteur.getId_user().toLowerCase() + " ' ;"); // sélection de l'idU de l'utilisateur
+                ArrayList<String> liste_id_user = moteur_de_requete_mur.parcoursTableSQL(requete_selection_id_user, "idU");
+                ArrayList<String> liste_id_wall = moteur_de_requete_mur.parcoursTableSQL(requete_selection_id_user, "idW");
+                System.out.println(liste_id_user);
+                System.out.println(liste_id_wall);
+                System.out.println(utilisateur_auteur.getId_user());
+                gestionTexte();
+
+                info_nouveau_post.put("texte", texte_du_post);
+                info_nouveau_post.put("format", null);
+                info_nouveau_post.put("urlIMG", null);
+                info_nouveau_post.put("urlVID", null);
+                info_nouveau_post.put("duree", null);
+                info_nouveau_post.put("dateC", nouveau_post.getDate());
+                info_nouveau_post.put("dateM", null);
+                info_nouveau_post.put("#idU", liste_id_user.get(0));
+                info_nouveau_post.put("#idW", liste_id_wall.get(0));
+                info_nouveau_post.put("Type_posts", "Texte");
+                nouveau_post.insertion_BDD_post(info_nouveau_post); // insère le post dans la base de données
+
                 }
 
                   
@@ -459,7 +483,6 @@ public class viewPrincipal extends ScrollPane {
          * 
          */
         TextArea champ_texte = new TextArea(); // Définition de la zone d'édition du texte
-        Label texte_du_post = new Label(); // futur variable qui va contenir le texte
         Button bouton_valider_post = new Button("Poster");
         champ_texte.setPrefWidth(TAILLE_FIELD_TEXTE); // Fixe la taille de la zone d'édition
         champ_texte.setPromptText("Ecrivez votre Poste ici");
